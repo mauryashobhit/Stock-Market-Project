@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PORTFOLIO OPTIMIZER</title>
+  <script src="https://cdn.plot.ly/plotly-2.20.0.min.js"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0e1117;
+      color: #e2e8f0;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #161b22;
+      color: white;
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 1030;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+      transition: background-color 0.3s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    nav a {
+      margin: 0 1rem;
+      color: #c9d1d9;
+      font-weight: 600;
+      transition: color 0.3s ease;
+      text-decoration: none;
+      position: relative;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -4px;
+      left: 0;
+      background-color: #58a6ff;
+      transition: width 0.3s ease;
+    }
+    nav a:hover {
+      color: #58a6ff;
+    }
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    .logo-link {
+  color: inherit;          
+  text-decoration: none;   
+  display: inline-flex;
+  align-items: center;
+}
+
+.logo-link:hover {
+  color: inherit;          
+  text-decoration: none;   
+}
+
+
+
+
+
+    .card {
+      background-color: #161b22;
+      border: none;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+      border-radius: 15px;
+      transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        opacity 0.5s ease,
+        scale 0.3s ease;
+      opacity: 0;
+      transform: translateY(30px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 12px 30px rgba(88, 166, 255, 0.7);
+    }
+    .card-header {
+      background-color: transparent;
+      border-bottom: none;
+      color: #58a6ff;
+      font-weight: 700;
+      font-size: 1.3rem;
+    }
+    .card-body p {
+      font-size: 1.1rem;
+    }
+    .list-group-item {
+      background-color: #0e1117;
+      border: none;
+      color: #c9d1d9;
+      font-weight: 500;
+    }
+    .list-group-item strong {
+      color: #58a6ff;
+    }
+    .list-group-item .text-success {
+      color: #2ea043 !important;
+      font-weight: 700;
+    }
+    .list-group-item .text-danger {
+      color: #d64545 !important;
+      font-weight: 700;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #161b22;
+      color: #8b949e;
+      margin-top: 2rem;
+    }
+    canvas {
+      width: 100% !important;
+      max-height: 300px !important;
+      background-color: #0d1117;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    }
+    input.form-control,
+    button.btn {
+      background-color: #21262d;
+      color: #e2e8f0;
+      border-color: #30363d;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    input.form-control::placeholder {
+      color: #8b949e;
+    }
+    button.btn-primary:hover {
+      background-color: #58a6ff;
+      color: #0e1117;
+    }
+    button.btn-success:hover {
+      background-color: #2ea043;
+      color: white;
+    }
+    /* Pulse animation for subscribe button */
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(88, 166, 255, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 15px 10px rgba(88, 166, 255, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(88, 166, 255, 0);
+      }
+    }
+    button.btn-primary {
+      animation: pulse 3s infinite;
+    }
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      nav {
+        text-align: center;
+        margin-top: 1rem;
+        width: 100%;
+      }
+      nav a {
+        margin: 0 0.5rem;
+        display: inline-block;
+      }
+    }
+
+    .chart-container {
+  position: relative;
+  width: 1320px;
+  height: 500px;
+  margin: 48px auto 0 auto;
+  border-radius: 28px;
+  background: linear-gradient(120deg,#0e1117 75%,#23407e 100%);
+  overflow: hidden;
+  /* animated border ... */
+  box-shadow: 0 0 0 6px #39defb66, 0 0 18px 4px #39defb33 inset;
+  border: 3.5px solid #bee0fd;
+  animation: border-glow 2.7s infinite alternate, border-hue 10s infinite linear;
+}
+
+
+
+
+    @keyframes border-glow {
+      0%   { box-shadow: 0 0 0 8px #39defb77, 0 0 22px 8px #39defb33 inset; }
+      50%  { box-shadow: 0 0 0 14px #9fc0f8bb, 0 0 46px 16px #39defb44 inset; }
+      100% { box-shadow: 0 0 0 8px #39defb99, 0 0 28px 7px #39defb55 inset; }
+    }
+    @keyframes border-hue {
+      0%   { border-color: #bee0fd; }
+      33%  { border-color: #39defb; }
+      66%  { border-color: #9fc0f8; }
+      100% { border-color: #bee0fd; }
+    }
+
+#plot {
+  width: 1200px;
+  height: 600px;
+  top: 0; left: 0; right: 0; bottom: 0;
+  margin: auto;
+  border-radius: 16px;
+  z-index: 2;
+  background: transparent;
+}
+
+
+    h2 {
+      text-align: center;
+      font-family: 'Arial Black', Arial, sans-serif;
+      color: #bee0fd;
+      margin: 0; padding-top: 35px;
+      z-index: 3;
+      position: relative;
+      filter: drop-shadow(0 2px 12px #11315c99);
+    }
+    /* SVG graphics (top left and side) */
+    .graphics-svg-corner {
+      position: absolute;
+      top: -35px; left: -45px;
+      pointer-events: none; z-index: 1;
+    }
+    .graphics-svg-right {
+      position: absolute;
+      bottom: -10px; right: -50px;
+      pointer-events: none; z-index: 1;
+      transform: rotate(9deg);
+    }
+    /* Custom watermark */
+    .graphics-watermark {
+      position: absolute;
+      bottom: 13px; left: 62px;
+      z-index: 2;
+      opacity: 0.08;
+      font-size: 70px;
+      font-family: 'Arial Black', Arial, sans-serif;
+      color: #bee0fd;
+      white-space: nowrap;
+      letter-spacing: 6px;
+      user-select: none;
+      pointer-events: none;
+      filter: blur(0.5px) drop-shadow(0 4px 12px #00537822);
+  
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0e1117;
+      color: #e2e8f0;
+      margin: 0;
+      padding: 0;
+    }
+    h2     { text-align: center; font-family: 'Arial Black', Arial, sans-serif; color: #bee0fd; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><a href="{% url 'index' %}" class="logo-link">PORTFOLIO OPTIMIZER</h1>
+    <nav>
+      <a href="{% url 'niftychart' %}">Markets</a>
+      <a href="{% url 'news' %}">News</a>
+      <a href="#">Portfolio</a>
+      <a href="#">Screener</a>
+      <a href="{% url 'login' %}">Login</a>
+    </nav>
+  </header>
+  <br><br><br>
+
+
+<div class="chart-container">
+    <!-- Decorative SVG: blue glow and shapes, top left -->
+    <svg class="graphics-svg-corner" width="290" height="175">
+      <defs>
+        <radialGradient id="g1b" cx="52%" cy="37%" r="85%">
+          <stop offset="0%" stop-color="#39defb" stop-opacity="0.15"/>
+          <stop offset="60%" stop-color="#2340fa" stop-opacity="0.03"/>
+          <stop offset="100%" stop-color="#0e1117" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="g2b" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#553b97" stop-opacity="0.04" />
+          <stop offset="100%" stop-color="#39defb" stop-opacity="0.09" />
+        </linearGradient>
+      </defs>
+      <ellipse cx="109" cy="71" rx="110" ry="52" fill="url(#g1b)"/>
+      <ellipse cx="45" cy="45" rx="36" ry="19" fill="#202a56" opacity="0.25"/>
+      <rect x="165" y="20" width="38" height="105" rx="17" fill="url(#g2b)" opacity="0.7"/>
+      <circle cx="40" cy="110" r="17" fill="#bee0fd" opacity="0.03"/>
+    </svg>
+    <!-- Decorative SVG: blue vertical shimmer, bottom right -->
+    <svg class="graphics-svg-right" width="110" height="210">
+      <defs>
+        <linearGradient id="g3b" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#c3cbe9" stop-opacity="0.055" />
+          <stop offset="75%" stop-color="#4a70d5" stop-opacity="0.15" />
+          <stop offset="100%" stop-color="#0e1117" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <ellipse cx="55" cy="101" rx="44" ry="95" fill="url(#g3b)"/>
+      <rect x="60" y="20" width="24" height="155" rx="12" fill="#1e2a48" opacity="0.18"/>
+    </svg>
+    <br><br>
+        <div id="plot"></div>
+  </div>
+
+<br><br><Br>
+
+
+<div class="chart-container" style="margin-top: 20px;">
+  <br><br>
+  <div id="volumePlot" style="width: 1200px; height: `1000px; margin: auto;"></div> <!-- New volume bar chart -->
+</div>
+
+
+<br><br><Br>
+
+<div class="chart-container" style="margin-top: 40px;">
+  <br><br><div id="priceHistogram" style="width: 1200px; height: 400px; margin: auto;"></div>
+</div>
+
+<br><br>
+  <script>    
+    function movingAverage(arr, windowSize) {
+      let result = [];
+      for (let i = 0; i < arr.length; i++) {
+        if (i < windowSize - 1) {
+          result.push(null);
+        } else {
+          const sum = arr.slice(i-windowSize+1, i+1).reduce((a, b) => a + b, 0);
+          result.push(sum / windowSize);
+        }
+      }
+      return result;
+    }
+
+    function getLastHourIndices(labels) {
+      const now = new Date();
+      const nowMins = now.getHours() * 60 + now.getMinutes();
+      let lower = 0;
+      for (let i = labels.length - 1; i >= 0; i--) {
+        const [hh, mm] = labels[i].split(':').map(Number);
+        const mins = hh * 60 + mm;
+        if (nowMins - mins <= 60 && nowMins - mins >= 0) {
+          lower = i;
+        } else if (nowMins - mins > 60) {
+          break;
+        }
+      }
+      return [lower, labels.length - 1];
+    }
+
+    let firstLoad = true;
+    let lastXRange = null;
+
+    let layout = {
+      width: 1200,
+      height: 400,
+      title: {
+        text: 'NIFTY',
+        font: { color: '#bee0fd', size: 28 }
+      },
+      plot_bgcolor: '#161b22',
+      paper_bgcolor: '#161b22',
+      xaxis: {
+        title: { text: 'Time', font: { color: 'white', size: 18, family: 'Arial Black' } },
+        showgrid: true,
+        showticklabels: false,
+        linecolor: '',
+        gridwidth:3,
+        zeroline: false,
+        rangeslider: { visible: false },
+        type: 'category',
+        range: null
+      },
+      yaxis: {
+        title: { text: 'Index Value', font: { color: 'white', size: 18, family: 'Arial Black' } },
+        showgrid: true,
+        showticklabels: false,
+        gridwidth:3,
+        linecolor: '#F8F8F8',
+        zeroline: false
+      },
+      showlegend: false,
+      legend: { font: { color: '#bee0fd' } },
+      dragmode: 'zoom',
+      margin: { t: 70, l: 70, r: 40, b: 60 }
+    };
+
+    const modeBarConfig = {
+      displayModeBar: true,
+      modeBarButtonsToRemove: [
+        'lasso2d', 'pan2d', 'autoScale2d', 'zoomIn2d', 'zoomOut2d', 'select2d',
+        'hoverClosestCartesian', 'hoverCompareCartesian', 'toggleSpikelines', 'toImage', 'sendDataToCloud'
+      ],
+      modeBarButtonsToAdd: ['zoom2d', 'resetScale2d'],
+      displaylogo: false
+    };
+
+    async function updateNifty() {
+      try {
+        const res = await fetch("{% url 'nifty50_data' %}");
+        const ohlc = await res.json();
+        if (!ohlc.labels || ohlc.labels.length === 0) return;
+
+        const candle = {
+          x: ohlc.labels,
+  open: ohlc.open,
+  high: ohlc.high,
+  low: ohlc.low,
+  close: ohlc.close,
+  decreasing: {line: {color: '#ef4444'}, fillcolor: '#0e1117'},
+  increasing: {line: {color: '#22d3ee'}, fillcolor: '#0e1117'},
+  type: 'candlestick',
+  name: 'Nifty50 Candle',
+  opacity: 0.98,
+  // Show OHLC values clearly in the hover popup:
+  hovertemplate:
+    '<b>%{x}</b><br>'+
+    'Open: <b>%{open:.2f}</b><br>'+
+    'High: <b>%{high:.2f}</b><br>'+
+    'Low: <b>%{low:.2f}</b><br>'+
+    'Close: <b>%{close:.2f}</b><br>'+
+    '<extra></extra>'
+                  };
+
+        const [lowerIdx, upperIdx] = getLastHourIndices(ohlc.labels);
+        lastXRange = [ohlc.labels[lowerIdx], ohlc.labels[upperIdx]];
+        layout.xaxis.range = lastXRange;
+
+        if (firstLoad) {
+          Plotly.newPlot('plot', [candle], layout, modeBarConfig);
+          document.getElementById('plot').on('plotly_doubleclick', function() {
+            Plotly.relayout('plot', {'xaxis.range': lastXRange});
+          });
+          firstLoad = false;
+        } else {
+          Plotly.animate('plot', {
+            data: [
+              { x: ohlc.labels, open: ohlc.open, high: ohlc.high, low: ohlc.low, close: ohlc.close },
+              { x: ohlc.labels, y: movingAverage(ohlc.close, 10) }
+            ],
+            layout: { 'xaxis.range': lastXRange }
+          }, {
+            transition: {duration: 900, easing: 'cubic-in-out'},
+            frame: {duration: 700, redraw: true}
+          });
+        }
+      } catch (e) {
+        document.getElementById('plot').innerHTML =
+          "<div style='color:#ff9e6e;text-align:center;margin-top:100px'>Failed to load live Nifty50 data.</div>";
+      }
+    }
+
+    updateNifty();
+    setInterval(updateNifty, 60000);
+
+
+
+    async function updateCloseLineChart() {
+  try {
+    const res = await fetch("{% url 'nifty50_data' %}");
+    const data = await res.json();
+    if (!data.labels || data.labels.length === 0) return;
+
+    const trace = {
+      x: data.labels,
+      y: data.close,
+      type: 'scatter',
+      mode: 'lines',
+      line: {
+        color: '#58a6ff',  // blue color line
+        width: 2
+      },
+      hovertemplate: '<b>%{x}</b><br>Close: <b>%{y}</b><extra></extra>'
+    };
+
+    const layout = {
+      title: { text: 'NIFTY 50 Closing Price', font: { color: '#bee0fd', size: 20 } },
+      plot_bgcolor: '#161b22',
+      paper_bgcolor: '#161b22',
+      xaxis: {
+        title: 'Time',
+        showticklabels: false,
+        gridcolor: '#30363d',
+        zeroline: false
+      },
+      yaxis: {
+        title: 'Close Price',
+        showticklabels: false,
+        gridcolor: '#30363d'
+      },
+      margin: { t: 40, l: 70, r: 40, b: 60 },
+      height: 400,
+      width: 1200,
+      showlegend: false,
+      font: { color: '#e2e8f0' }
+    };
+
+    const modeBarConfig = {
+      displayModeBar: true,
+      modeBarButtonsToRemove: [
+        'lasso2d', 'pan2d', 'autoScale2d', 'zoomIn2d', 'zoomOut2d', 'select2d',
+        'hoverClosestCartesian', 'hoverCompareCartesian', 'toggleSpikelines', 'toImage', 'sendDataToCloud'
+      ],
+      modeBarButtonsToAdd: ['zoom2d', 'resetScale2d'],
+      displaylogo: false
+    };
+
+    Plotly.react('volumePlot', [trace], layout, modeBarConfig);
+
+  } catch (error) {
+    document.getElementById('volumePlot').innerHTML =
+      "<div style='color:#ff9e6e;text-align:center;margin-top:30px'>Failed to load close price data.</div>";
+    console.error('Close line chart error:', error);
+  }
+}
+
+// Initial call to render the closing price line chart
+updateCloseLineChart();
+
+// Refresh every 60 seconds to keep data up to date
+setInterval(updateCloseLineChart, 60000);
+
+async function updatePriceHistogram() {
+  try {
+    const res = await fetch("{% url 'nifty50_data' %}");
+    const data = await res.json();
+    if (!data.close || data.close.length === 0) return;
+
+    const priceTrace = {
+      x: data.close,
+      type: 'histogram',
+      nbinsx: 30,
+      marker: {
+        color: '#58a6ff',
+        line: { width: 0.5, color: '#0e1117' }
+      },
+      opacity: 0.75,
+      name: 'Price Distribution'
+    };
+
+    const layout = {
+      title: { text: 'Closing Price Distribution', font: { color: '#bee0fd', size: 20 } },
+      plot_bgcolor: '#161b22',
+      paper_bgcolor: '#161b22',
+      margin: { t: 40, l: 70, r: 40, b: 60 },
+      font: { color: '#e2e8f0' },
+      bargap: 0.1,
+      xaxis: {
+        title: 'Close Price',
+        tickfont: { color: '#c9d1d9' },
+        gridcolor: '#30363d',
+        zeroline: false,
+        showticklabels: true
+      },
+      yaxis: {
+        title: 'Count',
+        tickfont: { color: '#c9d1d9' },
+        gridcolor: '#30363d',
+        zeroline: false,
+        showticklabels: true
+      },
+      showlegend: false,
+      height: 400,
+      width: 1200
+    };
+
+    const modeBarConfig = {
+      displayModeBar: true,
+      modeBarButtonsToRemove: [
+        'lasso2d', 'pan2d', 'autoScale2d', 'zoomIn2d', 'zoomOut2d', 'select2d',
+        'hoverClosestCartesian', 'hoverCompareCartesian', 'toggleSpikelines', 'toImage', 'sendDataToCloud'
+      ],
+      modeBarButtonsToAdd: ['zoom2d', 'resetScale2d'],
+      displaylogo: false
+    };
+
+    Plotly.react('priceHistogram', [priceTrace], layout, modeBarConfig);
+
+  } catch (error) {
+    document.getElementById('priceHistogram').innerHTML =
+      "<div style='color:#ff9e6e;text-align:center;margin-top:100px'>Failed to load price histogram data.</div>";
+    console.error("Price histogram update error:", error);
+  }
+}
+
+// Initial load of the closing price histogram
+updatePriceHistogram();
+
+// Update the histogram every 60 seconds
+setInterval(updatePriceHistogram, 60000);
+
+
+
+
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+      const plot = document.getElementById('plot');
+      plot && plot.addEventListener('plotly_doubleclick', function() {
+        if (typeof lastXRange !== 'undefined' && lastXRange) {
+          Plotly.relayout('plot', {'xaxis.range': lastXRange});
+        }
+      });
+    });
+  </script>
+</body>
+</html>

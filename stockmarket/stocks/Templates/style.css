@@ -1,0 +1,169 @@
+body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0e1117;
+      color: #e2e8f0;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #161b22;
+      color: white;
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 1030;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+      transition: background-color 0.3s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    nav a {
+      margin: 0 1rem;
+      color: #c9d1d9;
+      font-weight: 600;
+      transition: color 0.3s ease;
+      text-decoration: none;
+      position: relative;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -4px;
+      left: 0;
+      background-color: #58a6ff;
+      transition: width 0.3s ease;
+    }
+    nav a:hover {
+      color: #58a6ff;
+    }
+    nav a:hover::after {
+      width: 100%;
+    }
+    .card {
+      background-color: #161b22;
+      border: none;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+      border-radius: 15px;
+      transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        opacity 0.5s ease,
+        scale 0.3s ease;
+      opacity: 0;
+      transform: translateY(30px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 12px 30px rgba(88, 166, 255, 0.7);
+    }
+
+    .logo-link {
+  color: inherit;          /* Inherit the color from h1 */
+  text-decoration: none;   /* Remove underline */
+  display: inline-flex;
+  align-items: center;
+}
+
+.logo-link:hover {
+  color: inherit;          /* Keep same color on hover, no blue */
+  text-decoration: none;   /* No underline on hover */
+}
+
+    .card-header {
+      background-color: transparent;
+      border-bottom: none;
+      color: #51e6e8;
+      font-weight: 500;
+      font-size: 2.3rem;
+      align-items:center;
+    }
+    .card-body p {
+      font-size: 1.1rem;
+    }
+    .list-group-item {
+      background-color: #0e1117;
+      border: none;
+      color: #c9d1d9;
+      font-weight: 500;
+    }
+    .list-group-item strong {
+      color: #58a6ff;
+    }
+    .list-group-item .text-success {
+      color: #2ea043 !important;
+      font-weight: 700;
+    }
+    .list-group-item .text-danger {
+      color: #d64545 !important;
+      font-weight: 700;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #161b22;
+      color: #8b949e;
+      margin-top: 2rem;
+    }
+    canvas {
+      width: 100% !important;
+      max-height: 300px !important;
+      background-color: #0d1117;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    }
+    input.form-control,
+    button.btn {
+      background-color: #21262d;
+      color: #e2e8f0;
+      border-color: #30363d;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    input.form-control::placeholder {
+      color: #8b949e;
+    }
+    button.btn-primary:hover {
+      background-color: #58a6ff;
+      color: #0e1117;
+    }
+    button.btn-success:hover {
+      background-color: #2ea043;
+      color: white;
+    }
+    /* Pulse animation for subscribe button */
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(88, 166, 255, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 15px 10px rgba(88, 166, 255, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(88, 166, 255, 0);
+      }
+    }
+    button.btn-primary {
+      animation: pulse 3s infinite;
+    }
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      nav {
+        text-align: center;
+        margin-top: 1rem;
+        width: 100%;
+      }
+      nav a {
+        margin: 0 0.5rem;
+        display: inline-block;
+      }
+    }

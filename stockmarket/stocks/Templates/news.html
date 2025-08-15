@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>StockVision - Live Charts</title>
+  <!-- Bootstrap CSS -->
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #0e1117;
+      color: #e2e8f0;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #161b22;
+      color: white;
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 1030;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+      transition: background-color 0.3s ease;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    nav a {
+      margin: 0 1rem;
+      color: #c9d1d9;
+      font-weight: 600;
+      transition: color 0.3s ease;
+      text-decoration: none;
+      position: relative;
+    }
+    nav a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -4px;
+      left: 0;
+      background-color: #58a6ff;
+      transition: width 0.3s ease;
+    }
+    nav a:hover {
+      color: #58a6ff;
+    }
+    nav a:hover::after {
+      width: 100%;
+    }
+    .card {
+      background-color: #161b22;
+      border: none;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+      border-radius: 15px;
+      transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        opacity 0.5s ease,
+        scale 0.3s ease;
+      opacity: 0;
+      transform: translateY(30px);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .card:hover {
+      transform: translateY(-10px) scale(1.02);
+      box-shadow: 0 12px 30px rgba(88, 166, 255, 0.7);
+    }
+
+    .logo-link {
+  color: inherit;          /* Inherit the color from h1 */
+  text-decoration: none;   /* Remove underline */
+  display: inline-flex;
+  align-items: center;
+}
+
+.logo-link:hover {
+  color: inherit;          /* Keep same color on hover, no blue */
+  text-decoration: none;   /* No underline on hover */
+}
+
+    .card-header {
+      background-color: transparent;
+      border-bottom: none;
+      color: #51e6e8;
+      font-weight: 500;
+      font-size: 2.3rem;
+      align-items:center;
+    }
+    .card-body p {
+      font-size: 1.1rem;
+    }
+    .list-group-item {
+      background-color: #0e1117;
+      border: none;
+      color: #c9d1d9;
+      font-weight: 500;
+    }
+    .list-group-item strong {
+      color: #58a6ff;
+    }
+    .list-group-item .text-success {
+      color: #2ea043 !important;
+      font-weight: 700;
+    }
+    .list-group-item .text-danger {
+      color: #d64545 !important;
+      font-weight: 700;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      background: #161b22;
+      color: #8b949e;
+      margin-top: 2rem;
+    }
+    canvas {
+      width: 100% !important;
+      max-height: 300px !important;
+      background-color: #0d1117;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+    }
+    input.form-control,
+    button.btn {
+      background-color: #21262d;
+      color: #e2e8f0;
+      border-color: #30363d;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    input.form-control::placeholder {
+      color: #8b949e;
+    }
+    button.btn-primary:hover {
+      background-color: #58a6ff;
+      color: #0e1117;
+    }
+    button.btn-success:hover {
+      background-color: #2ea043;
+      color: white;
+    }
+    /* Pulse animation for subscribe button */
+    @keyframes pulse {
+      0% {
+        box-shadow: 0 0 0 0 rgba(88, 166, 255, 0.7);
+      }
+      70% {
+        box-shadow: 0 0 15px 10px rgba(88, 166, 255, 0);
+      }
+      100% {
+        box-shadow: 0 0 0 0 rgba(88, 166, 255, 0);
+      }
+    }
+    button.btn-primary {
+      animation: pulse 3s infinite;
+    }
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      nav {
+        text-align: center;
+        margin-top: 1rem;
+        width: 100%;
+      }
+      nav a {
+        margin: 0 0.5rem;
+        display: inline-block;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1><a href="{% url 'index' %}" class="logo-link">STOCK VISION</h1>
+    
+    <nav>
+      <a href="{% url 'niftychart' %}">Markets</a>
+      <a href="{% url 'news' %}">News</a>
+      <a href="#">Portfolio</a>
+      <a href="#">Screener</a>
+      <a href="{% url 'login' %}">Login</a>
+    </nav>
+  </header>
+
+
+        <div class="card p-4 h-100 d-flex flex-column">
+  <div class="d-flex justify-content-center align-items-center vh-50">
+  <div class="my-centered-div">
+    <br><br><h4 align="center" style="color:#02a8d6">{{list.0}}</h4><h5 align="center" style="color:#EDEADE">{{list1.0}}</h5><br><br>
+    <h4 align="center" style="color:#02a8d6">{{list.1}}</h4><h5 align="center" style="color:#EDEADE">{{list1.1}}</h5><br><br>
+    <h4 align="center" style="color:#02a8d6">{{list.2}}</h4><h5 align="center" style="color:#EDEADE">{{list1.2}}</h5><br><br>
+    <h4 align="center" style="color:#02a8d6">{{list.3}}</h4><h5 align="center" style="color:#EDEADE">{{list1.3}}</h5><br><br>
+    <h4 align="center" style="color:#02a8d6">{{list.4}}</h4><h5 align="center" style="color:#EDEADE">{{list1.4}}</h5><br><br>
+    <h4 align="center" style="color:#02a8d6">{{list.5}}</h4><h5 align="center" style="color:#EDEADE">{{list1.5}}</h5><br><br>
+    <h4 align="center" style="color:#02a8d6">{{list.6}}</h4><h5 align="center" style="color:#EDEADE">{{list1.6}}</h5><br><br>
+    <h4 align="center" style="color:#02a8d6">{{list.7}}</h4><h5 align="center" style="color:#EDEADE">{{list1.7}}</h5><br><Br>
+    <h4 align="center" style="color:#02a8d6">{{list.8}}</h4><h5 align="center" style="color:#EDEADE">{{list1.8}}</h5><br><Br>
+    <h4 align="center" style="color:#02a8d6">{{list.9}}</h4><h5 align="center" style="color:#EDEADE">{{list1.9}}</h5><br><Br>
+    <h4 align="center" style="color:#02a8d6">{{list.10}}</h4><h5 align="center" style="color:#EDEADE">{{list1.10}}</h5><br><Br>
+    <h4 align="center" style="color:#02a8d6">{{list.11}}</h4><h5 align="center" style="color:#EDEADE">{{list1.11}}</h5><br><Br>
+    <h4 align="center" style="color:#02a8d6">{{list.12}}</h4><h5 align="center" style="color:#EDEADE">{{list1.12}}</h5><br><Br>
+    <h4 align="center" style="color:#02a8d6">{{list.13}}</h4><h5 align="center" style="color:#EDEADE">{{list1.13}}</h5><br><Br>
+    <h4 align="center" style="color:#02a8d6">{{list.14}}</h4><h5 align="center" style="color:#EDEADE">{{list1.14}}</h5><br><Br>
+    <h4 align="center" style="color:#02a8d6">{{list.15}}</h4><h5 align="center" style="color:#EDEADE">{{list1.15}}</h5><br><Br>
+    <h4 align="center" style="color:#02a8d6">{{list.16}}</h4><h5 align="center" style="color:#EDEADE">{{list1.16}}</h5>
+  </h2>
+  </div>
+</div>
+        </div>
+
+
+  <footer><h5 style="color:white">
+    &copy; 2025 StockVision. All rights reserved.</h5>
+  </footer>
+
+  <!-- Bootstrap JS Bundle (includes Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Animate cards on scroll
+    function animateCards() {
+      const cards = document.querySelectorAll('.card');
+      const windowBottom = window.innerHeight + window.scrollY;
+
+      cards.forEach(card => {
+        if (card.offsetTop < windowBottom - 100) {
+          card.classList.add('visible');
+        }
+      });
+    }
+    window.addEventListener('scroll', animateCards);
+    window.addEventListener('load', animateCards);
+
+    // Initialize Market Overview Bar Chart with live updates
+    const ctxMarket = document.getElementById('marketChart').getContext('2d');
+    let marketData = [4000, 4200, 4150, 4300, 4450];
+    const marketLabels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+
+    const marketChart = new Chart(ctxMarket, {
+      type: 'bar',
+      data: {
+        labels: marketLabels,
+        datasets: [{
+          label: 'Market Index',
+          data: marketData,
+          backgroundColor: ['#10b981', '#22c55e', '#34d399', '#4ade80', '#6ee7b7'],
+          borderRadius: 10,
+        }],
+      },
+      options: {
+        animation: {
+          duration: 1000,
+          easing: 'easeOutQuart'
+        },
+        responsive: true,
+        plugins: {
+          tooltip: { mode: 'index', intersect: false },
+          legend: { display: false },
+        },
+        scales: {
+          y: {
+            beginAtZero: false,
+            ticks: { color: '#c9d1d9', font: { weight: 'bold' } },
+            grid: { color: '#30363d' },
+          },
+          x: {
+            ticks: { color: '#c9d1d9', font: { weight: 'bold' } },
+            grid: { color: '#30363d' },
+          },
+        },
+      },
+    });
+
+    // Initialize Stock Price Trend Line Chart with live updates
+    const ctxTrend = document.getElementById('priceTrendChart').getContext('2d');
+    let priceTrendLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
+    let priceTrendData = [1400, 1425, 1450, 1470, 1460, 1480, 1495];
+
+    const priceTrendChart = new Chart(ctxTrend, {
+      type: 'line',
+      data: {
+        labels: priceTrendLabels,
+        datasets: [{
+          label: 'INFY Price (₹)',
+          data: priceTrendData,
+          borderColor: '#58a6ff',
+          backgroundColor: 'rgba(88, 166, 255, 0.3)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          pointBackgroundColor: '#58a6ff',
+          borderWidth: 3,
+        }],
+      },
+      options: {
+        animation: {
+          duration: 1500,
+          easing: 'easeOutQuart'
+        },
+        responsive: true,
+        plugins: {
+          tooltip: { mode: 'nearest', intersect: false },
+          legend: { labels: { color: '#c9d1d9' } },
+        },
+        scales: {
+          y: {
+            ticks: { color: '#c9d1d9', font: { weight: 'bold' } },
+            grid: { color: '#30363d' },
+          },
+          x: {
+            ticks: { color: '#c9d1d9', font: { weight: 'bold' } },
+            grid: { color: '#30363d' },
+          },
+        },
+      },
+    });
+
+    // Portfolio Allocation Doughnut Chart (static)
+    const ctxPortfolio = document.getElementById('portfolioChart').getContext('2d');
+    const portfolioChart = new Chart(ctxPortfolio, {
+      type: 'doughnut',
+      data: {
+        labels: ['INFY', 'TCS', 'RELIANCE', 'HDFCLIFE', 'SBIN'],
+        datasets: [{
+          data: [30, 25, 20, 15, 10],
+          backgroundColor: [
+            '#58a6ff',
+            '#2ea043',
+            '#f59e0b',
+            '#ef4444',
+            '#6366f1',
+          ],
+          borderWidth: 2,
+          borderColor: '#0e1117',
+        }],
+      },
+      options: {
+        animation: {
+          animateRotate: true,
+          duration: 1500,
+          easing: 'easeOutQuart'
+        },
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: '#c9d1d9', font: { weight: 'bold' } } },
+          tooltip: { enabled: true },
+        },
+      },
+    });
+
+    // Function to simulate live updates
+    function updateCharts() {
+      // Update market indices randomly (small fluctuations)
+      for(let i=0; i<marketData.length; i++) {
+        const change = (Math.random() - 0.5) * 40; // ±20 approx
+        marketData[i] = Math.max(3800, Math.min(4600, marketData[i] + change));
+      }
+      marketChart.data.datasets[0].data = marketData;
+      marketChart.update();
+
+      // Update market index % display (relative to base values)
+      const sp500Change = ((marketData[marketData.length-1] - 4000) / 4000) * 100;
+      const nasdaqChange = ((marketData[marketData.length-2] - 4200) / 4200) * 100;
+      const niftyChange = -0.14 + ((Math.random() - 0.5) * 0.3); // fluctuate near -0.14%
+
+      document.getElementById('sp500').textContent =
+        `${sp500Change >= 0 ? '+' : ''}${sp500Change.toFixed(2)}%`;
+      document.getElementById('nasdaq').textContent =
+        `${nasdaqChange >= 0 ? '+' : ''}${nasdaqChange.toFixed(2)}%`;
+      document.getElementById('nifty').textContent =
+        `${niftyChange >= 0 ? '+' : ''}${niftyChange.toFixed(2)}%`;
+
+      // Update stock price trend with a new random price close to last one
+      const lastPrice = priceTrendData[priceTrendData.length - 1];
+      let newPrice = lastPrice + (Math.random() - 0.5) * 15;
+      newPrice = Math.max(1350, Math.min(1550, newPrice));
+      priceTrendData.push(newPrice);
+      priceTrendData.shift(); // keep length constant
+
+      priceTrendChart.data.datasets[0].data = priceTrendData;
+      priceTrendChart.update();
+    }
+
+    // Update charts every 3 seconds
+    setInterval(updateCharts, 3000);
+
+    // Handle newsletter subscription
+    const form = document.getElementById('subscribeForm');
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const email = document.getElementById('emailInput').value;
+      alert(`Thanks for subscribing, ${email}!`);
+      form.reset();
+    });
+  </script>
+</body>
+</html>
+

@@ -46,8 +46,12 @@ def nifty50_data(request):
         'close': close_prices,
         'volume': volumes})
 
+
 def niftychart(request):
     return render(request, 'nifty_chart.html')
+
+def screener(request):
+    return render(request,'screener.html')
 
 def login(request):
     return render(request,'Login.html')

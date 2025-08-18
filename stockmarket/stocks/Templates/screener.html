@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PORTFOLIO OPTIMIZER (Demo)</title>
+  <script src="https://cdn.plot.ly/plotly-2.20.0.min.js"></script>
+  <style>
+    body {font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0e1117; color: #e2e8f0; margin: 0;}
+    header {background-color: #161b22; color: white; padding: 1rem 2rem; position: sticky; top: 0; z-index: 1030; box-shadow: 0 2px 5px rgba(0,0,0,0.4); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;}
+    nav a {margin: 0 1rem; color: #c9d1d9; font-weight: 600; text-decoration: none; position: relative;}
+    nav a::after {content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0; background-color: #58a6ff; transition: width 0.3s;}
+    nav a:hover {color: #58a6ff;}
+    nav a:hover::after {width: 100%;}
+    .logo-link {color: inherit; text-decoration: none; display: inline-flex; align-items: center;}
+    .company-section {margin: 48px auto; width: 1320px; background: #161b22; border-radius: 18px; box-shadow: 0 6px 26px #39defb33;}
+    .company-title {padding: 34px 40px 8px 40px;}
+    .company-section p {padding: 0px 40px 10px 40px; font-size: 1.1rem;}
+    .charts-flex {display: flex; flex-wrap: wrap; justify-content: space-between;}
+    .chart-container {width: 410px; height: 345px; margin: 24px 20px 32px 40px; background: linear-gradient(120deg,#0e1117 75%,#23407e 100%); border-radius: 13px; box-shadow: 0 0 0 4px #39defb33; overflow: hidden;}
+    h2 {text-align: left; font-family: 'Arial Black', Arial, sans-serif; color: #bee0fd; margin: 0; padding-top: 6px; margin-bottom: 6px;}
+    @media (max-width: 1660px) { .company-section{width:98%;} }
+    @media (max-width: 1370px) {.charts-flex { flex-direction: column; } .chart-container {width:97%; margin:20px auto;}}
+    @media (max-width: 800px) { .company-title, .company-section p {padding: 0 10px;}}
+  </style>
+</head>
+<body>
+  <header>
+    <h1><a href="#" class="logo-link">PORTFOLIO OPTIMIZER</a></h1>
+    <nav>
+      <a href="{% url 'niftychart' %}">Markets</a>
+      <a href="{% url 'news' %}">News</a>
+      <a href="#">Portfolio</a>
+      <a href="#">Screener</a>
+      <a href="{% url 'login' %}">Login</a>
+    </nav>
+  </header>
+
+  <div class="company-section">
+    <div class="company-title"><h2>Alphabet Inc. (GOOG)</h2></div>
+    <p>Leading tech company focusing on search, cloud, AI, and platforms. 2025 revenue driven by search, YouTube, Cloud.</p>
+    <div class="charts-flex">
+      <div class="chart-container"><div id="goog-candle"></div></div>
+      <div class="chart-container"><div id="goog-close"></div></div>
+      <div class="chart-container"><div id="goog-hist"></div></div>
+    </div>
+  </div>
+  <div class="company-section">
+    <div class="company-title"><h2>Microsoft (MSFT)</h2></div>
+    <p>Major tech player in software, cloud and AI. 2025 revenue $281.7B, strong cloud and AI focus.</p>
+    <div class="charts-flex">
+      <div class="chart-container"><div id="msft-candle"></div></div>
+      <div class="chart-container"><div id="msft-close"></div></div>
+      <div class="chart-container"><div id="msft-hist"></div></div>
+    </div>
+  </div>
+  <div class="company-section">
+    <div class="company-title"><h2>Cisco (CSCO)</h2></div>
+    <p>Digital communications leader in networking, cloud, and cybersecurity, based in San Jose. 40+ years in tech.</p>
+    <div class="charts-flex">
+      <div class="chart-container"><div id="csco-candle"></div></div>
+      <div class="chart-container"><div id="csco-close"></div></div>
+      <div class="chart-container"><div id="csco-hist"></div></div>
+    </div>
+  </div>
+  <div class="company-section">
+    <div class="company-title"><h2>Amazon (AMZN)</h2></div>
+    <p>Global e-commerce/cloud leader, 2024 revenue of $630B, 1.5M+ employees.</p>
+    <div class="charts-flex">
+      <div class="chart-container"><div id="amzn-candle"></div></div>
+      <div class="chart-container"><div id="amzn-close"></div></div>
+      <div class="chart-container"><div id="amzn-hist"></div></div>
+    </div>
+  </div>
+  <div class="company-section">
+    <div class="company-title"><h2>Apple (AAPL)</h2></div>
+    <p>Leading consumer tech, double-digit growth in services and record revenues in 2025.</p>
+    <div class="charts-flex">
+      <div class="chart-container"><div id="aapl-candle"></div></div>
+      <div class="chart-container"><div id="aapl-close"></div></div>
+      <div class="chart-container"><div id="aapl-hist"></div></div>
+    </div>
+  </div>
+  <div class="company-section">
+    <div class="company-title"><h2>Adobe (ADBE)</h2></div>
+    <p>Software innovator in digital media/documents/marketing. Very strong creative software suite.</p>
+    <div class="charts-flex">
+      <div class="chart-container"><div id="adbe-candle"></div></div>
+      <div class="chart-container"><div id="adbe-close"></div></div>
+      <div class="chart-container"><div id="adbe-hist"></div></div>
+    </div>
+  </div>
+  <div class="company-section">
+    <div class="company-title"><h2>Meta Platforms (META)</h2></div>
+    <p>Social/advertising giant, aggressive 2025 AI investments. Runs Facebook, Instagram, WhatsApp.</p>
+    <div class="charts-flex">
+      <div class="chart-container"><div id="meta-candle"></div></div>
+      <div class="chart-container"><div id="meta-close"></div></div>
+      <div class="chart-container"><div id="meta-hist"></div></div>
+    </div>
+  </div>
+  <div class="company-section">
+    <div class="company-title"><h2>Netflix (NFLX)</h2></div>
+    <p>Largest streaming service (301M+, 2025), produces content and games, $41.7B revenue.</p>
+    <div class="charts-flex">
+      <div class="chart-container"><div id="nflx-candle"></div></div>
+      <div class="chart-container"><div id="nflx-close"></div></div>
+      <div class="chart-container"><div id="nflx-hist"></div></div>
+    </div>
+  </div>
+  <div class="company-section">
+    <div class="company-title"><h2>Walmart (WMT)</h2></div>
+    <p>World’s largest retailer, $681B 2025 revenue, strong in grocery and omnichannel sales.</p>
+    <div class="charts-flex">
+      <div class="chart-container"><div id="wmt-candle"></div></div>
+      <div class="chart-container"><div id="wmt-close"></div></div>
+      <div class="chart-container"><div id="wmt-hist"></div></div>
+    </div>
+  </div>
+  <div class="company-section">
+    <div class="company-title"><h2>JP Morgan (JPM)</h2></div>
+    <p>Largest US bank, investment/financial services leader. $3.9T assets in 2024.</p>
+    <div class="charts-flex">
+      <div class="chart-container"><div id="jpm-candle"></div></div>
+      <div class="chart-container"><div id="jpm-close"></div></div>
+      <div class="chart-container"><div id="jpm-hist"></div></div>
+    </div>
+  </div>
+
+  <script>
+    // Generate random "stock" data for demo visualization
+    function randomWalk(start, n, minDelta=-1.5, maxDelta=1.5) {
+      let arr = [start];
+      for(let i=1;i<n;i++) {
+        arr.push((arr[i-1] + (Math.random()*(maxDelta-minDelta)+minDelta)));
+      }
+      return arr;
+    }
+    function randomOHLC(n, start=100) {
+      let close = randomWalk(start, n);
+      let open = close.map((v,i,arr)=>i===0?v:arr[i-1]);
+      let high = close.map((v)=>v+Math.random()*2);
+      let low = close.map((v)=>v-Math.random()*2);
+      let volume = close.map(()=>Math.floor(100000+Math.random()*100000));
+      return {close, open, high, low, volume};
+    }
+    function timeLabels(n) {
+      // Generate labels like "09:30", "09:35", ..., "13:30" (5 min intervals)
+      let arr = [];
+      let hr = 9, min = 30;
+      for(let i=0;i<n;i++) {
+        arr.push(('0'+hr).slice(-2)+':'+('0'+min).slice(-2));
+        min += 5;
+        if(min>=60) { min-=60; hr++; }
+      }
+      return arr;
+    }
+
+    // Chart rendering
+    function renderOne(stock, prefix) {
+      // Data: 50 timepoints for intraday fake data
+      let n = 50;
+      let labels = timeLabels(n);
+      let {open,high,low,close,volume} = randomOHLC(n, 100+Math.random()*100);
+
+      // Candlestick
+      Plotly.newPlot(prefix+'-candle', [{
+        type: 'candlestick', x: labels, open, high, low, close,
+        decreasing: {line: {color: '#ef4444'}, fillcolor: '#0e1117'},
+        increasing: {line: {color: '#22d3ee'}, fillcolor: '#0e1117'},
+        name: stock+' Candlestick', opacity:0.96
+      }], {
+        title: { text: stock+' Candlestick', font: { color: '#bee0fd', size: 18 } },
+        dragmode: 'zoom', plot_bgcolor: '#161b22', paper_bgcolor: '#161b22', showlegend: false,
+        xaxis: {title: 'Time', showticklabels: false},
+        yaxis: {title: 'Price', showticklabels: false},
+        margin: { t:35, l: 40, r: 15, b: 30},
+        height: 270, width: 340
+      });
+
+      // Close line chart
+      Plotly.newPlot(prefix+'-close', [{
+        x: labels, y: close, type: 'scatter', mode: 'lines',
+        line: {color: '#58a6ff', width:2}, name: stock+' Close', opacity:0.93
+      }], {
+        title: { text: stock+' Close Price', font: {color:'#bee0fd',size:17} },
+        plot_bgcolor:'#161b22', paper_bgcolor:'#161b22', showlegend:false,
+        xaxis:{title:'Time',showticklabels:false}, yaxis:{title:'Close',showticklabels:false},
+        margin: { t:30, l: 40, r: 15, b: 30 }, height: 270, width: 340
+      });
+
+      // Price histogram
+      Plotly.newPlot(prefix+'-hist', [{
+        x: close, type: 'histogram', nbinsx: 20, name: stock+' Histogram',
+        marker: {color:'#58a6ff', line:{width:0.5,color:'#0e1117'}}, opacity: 0.78
+      }], {
+        title: {text: stock+' Price Histogram', font:{color:'#bee0fd',size:16}},
+        plot_bgcolor:'#161b22', paper_bgcolor:'#161b22', showlegend:false,
+        bargap:0.08, margin:{t:28,l:36,r:14,b:26}, height: 270, width: 340,
+        xaxis:{title:'Close Price'}, yaxis:{title:'Count'}
+      });
+    }
+
+    // Render for all 10 stocks on DOMContentLoaded
+    document.addEventListener("DOMContentLoaded",function(){
+      const stocks = [
+        {prefix:'goog', name:'GOOG'},
+        {prefix:'msft', name:'MSFT'},
+        {prefix:'csco', name:'CSCO'},
+        {prefix:'amzn', name:'AMZN'},
+        {prefix:'aapl', name:'AAPL'},
+        {prefix:'adbe', name:'ADBE'},
+        {prefix:'meta', name:'META'},
+        {prefix:'nflx', name:'NFLX'},
+        {prefix:'wmt',  name:'WMT'},
+        {prefix:'jpm',  name:'JPM'}
+      ];
+      stocks.forEach(s=>renderOne(s.name, s.prefix));
+    });
+  </script>
+</body>
+</html>

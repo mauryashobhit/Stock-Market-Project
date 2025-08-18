@@ -9,6 +9,7 @@ urlpatterns = [
     path("news/",views.news,name="news"),
     path('api/nifty50/', views.nifty50_data, name='nifty50_data'),
     path('nifty-chart/', views.niftychart, name='niftychart'),
+    path('screener/', views.screener, name='screener'),
     path('login/',views.login,name="login")]
 
     

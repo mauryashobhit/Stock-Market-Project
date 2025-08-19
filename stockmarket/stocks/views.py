@@ -5,6 +5,42 @@ from django.http import JsonResponse
 import yfinance as yf
 
 
+COMPANIES = [
+    {"name": "Alphabet (Google)", "ticker": "GOOGL", "allocation": 17},
+    {"name": "Microsoft", "ticker": "MSFT", "allocation": 15},
+    {"name": "Cisco", "ticker": "CSCO", "allocation": 8},
+    {"name": "Amazon", "ticker": "AMZN", "allocation": 12},
+    {"name": "Apple", "ticker": "AAPL", "allocation": 13},
+    {"name": "Adobe", "ticker": "ADBE", "allocation": 7},
+    {"name": "Meta Platforms", "ticker": "META", "allocation": 10},
+    {"name": "Netflix", "ticker": "NFLX", "allocation": 6},
+    {"name": "Walmart", "ticker": "WMT", "allocation": 7},
+    {"name": "JP Morgan Chase", "ticker": "JPM", "allocation": 5},
+]
+
+def invest(request):
+    amount = float(request.GET["amount"])
+    tickers = [c["ticker"] for c in COMPANIES]
+    allocations = [c["allocation"] for c in COMPANIES]
+    invested = [round(amount * (w/100), 2) for w in allocations]
+
+    # Optionally fetch price data and simulate portfolio growth as before...
+
+    response = {
+        "companies": [
+            {
+                "name": c["name"], "ticker": c["ticker"],
+                "allocation": round(c["allocation"],2), "invested": inv
+            }
+            for c, inv in zip(COMPANIES, invested)
+        ],
+        # "dates": [...], "values": [...]
+    }
+    return JsonResponse(response)
+
+def investment(request):
+    return render(request,"investment.html")
+
 def index(request):
     stock_data = {}
     if request.method == "POST":
